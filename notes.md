@@ -2,7 +2,14 @@ KJ's AGREEMENT
 
 KJ's Notes
 
-ImageSummaryApp
+## ImageSummaryApp
 - Takes in a target image, hex color, and a threshold (for what?)
 - Parses over arguments in input command
 - Binarize, buffer, write out image.
+
+## ColorDistanceFinder
+"Defines an interface for computing the distance between two colors."
+ - Uses hex codes
+ - How would we calculate the distance between colors?
+
+ 
