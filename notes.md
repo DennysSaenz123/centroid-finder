@@ -31,3 +31,9 @@ Does what it says on the lid.
 
 death, taxes, and calculus (pain.png)
 
+## ImageGroupFinder
+"Find connected groups in an image."
+whatever that means
+
+**findConnectedGroups(BufferedImage image)**
+BufferedImage -> `List<Group>`
