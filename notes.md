@@ -2,6 +2,9 @@ KJ's AGREEMENT
 
 # KJ's Notes
 
+## Group
+int x, int y
+
 ## ImageSummaryApp
 - Takes in a target image, hex color, and a threshold (for what?)
 - Parses over arguments in input command
@@ -37,3 +40,17 @@ whatever that means
 
 **findConnectedGroups(BufferedImage image)**
 BufferedImage -> `List<Group>`
+
+## BinaryGroupFinder
+"Finds connected pixel groups of 1s in an integer Array representing a binary image.
+IT'S THE ISLAND PROBLEM
+
+- Connected adjacently only, not diagonally.
+- `centroid = (x.avg, y.avg) // int division`
+- Sorted in descending order.
+- Throws NullPointerException if image = null or `image[0]` = null
+- Throws IllegalArgumentException invalid otherwise.
+- Sort using Group's compareTo method. 
+
+**findConnectedGroups(int[][] image)**
+int[][] -> `List<Group>`
