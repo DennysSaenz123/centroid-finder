@@ -1,6 +1,6 @@
 KJ's AGREEMENT
 
-KJ's Notes
+# KJ's Notes
 
 ## ImageSummaryApp
 - Takes in a target image, hex color, and a threshold (for what?)
@@ -12,4 +12,13 @@ KJ's Notes
  - Uses hex codes
  - How would we calculate the distance between colors?
 
- 
+ ## ImageBinarizer
+ "An interface for converting between RBG.. and binary (B&W)"
+- Binary image represented as int[][].
+- 1 = white, 0 = black
+- Contains two methods:
+**toBinaryArray(BufferedImage image)**
+BufferedImage -> int[][]
+
+**toBufferedImage(int[][] image)**
+int[][] -> BufferedImage
