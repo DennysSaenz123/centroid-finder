@@ -57,3 +57,5 @@ int[][] -> `List<Group>`
 
 ## DfsBinaryGroupFinder implements BinaryGroupFinder
 if this is DFS then the implemented class must be BFS
+
+DENNYS AGREEMENT
