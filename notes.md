@@ -72,3 +72,9 @@ Command-line program that takes an image, a target color, and a threshold. It ma
 - toBinaryArray(BufferedImage image) takes a color image and returns an int[][] where each pixel is 1 (white) or 0 (black). It doesn’t decide how to pick white vs black; the implementing class does. In your app,  DistanceImageBinarizer makes a pixel white if its color is within the threshold distance of the target color.
 
 - toBufferedImage(int[][] image) goes the other way. It turns that grid of 1s and 0s back into an actual image, using 0xFFFFFF for white and 0x000000 for black.
+
+## Group
+
+- Represents a group of contiguous pixels in an image. [x, y] coordinated instead of [row, column]
+- Returns a negative integer, zero, or a positive integer if this group is less than, equal to, or greater than the specified group
+- Groups size tell the number of pixels in gruop.
