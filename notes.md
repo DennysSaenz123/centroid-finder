@@ -59,3 +59,6 @@ int[][] -> `List<Group>`
 if this is DFS then the implemented class must be BFS
 
 DENNYS AGREEMENT
+
+## ImageSummaryApp
+Command-line program that takes an image, a target color, and a threshold. It marks the pixels close to that color as white and everything else as black, saves that black-and-white image, then finds the connected white blobs and writes a summary of them to a CSV file.
