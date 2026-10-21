@@ -64,5 +64,11 @@ DENNYS AGREEMENT
 Command-line program that takes an image, a target color, and a threshold. It marks the pixels close to that color as white and everything else as black, saves that black-and-white image, then finds the connected white blobs and writes a summary of them to a CSV file.
 
 ## ImageGroupfinder
--Input: a BufferedImage
--Output: a List<Group> of the connected regions found in that image
+- Input: a BufferedImage
+- Output: a List<Group> of the connected regions found in that image
+
+## Imagebianizer
+
+- toBinaryArray(BufferedImage image) takes a color image and returns an int[][] where each pixel is 1 (white) or 0 (black). It doesn’t decide how to pick white vs black; the implementing class does. In your app,  DistanceImageBinarizer makes a pixel white if its color is within the threshold distance of the target color.
+
+- toBufferedImage(int[][] image) goes the other way. It turns that grid of 1s and 0s back into an actual image, using 0xFFFFFF for white and 0x000000 for black.
