@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Collections;
 
 public class DfsBinaryGroupFinder implements BinaryGroupFinder {
    /**
@@ -54,8 +55,8 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
             }
         }
 
-        // TODO: Write an algorithm to sort groups into descending order
-        // (probably plageous)
+        // TODO: requires testing
+        groups.sort(Collections.reverseOrder());
 
         return groups;
     }
