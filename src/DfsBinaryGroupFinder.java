@@ -1,5 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 public class DfsBinaryGroupFinder implements BinaryGroupFinder {
    /**
@@ -43,6 +45,17 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
             throw new IllegalArgumentException("Input image cannot be empty.");
         }
         List<Group> groups = new ArrayList<>();
+
+
+    }
+
+
+    public Group findConnectedGroup(int[][] image) {
+
+    }
+
+    public Coordinate explore(int[][] image, Coordinate current, Set<Coordinate> visited) {
+
     }
     
 }
