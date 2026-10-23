@@ -42,7 +42,7 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         if(image.length == 0 || image[0].length == 0) {
             throw new IllegalArgumentException("Input image cannot be empty.");
         }
-        
+
         List<Group> groups = new ArrayList<>();
         Set<Coordinate> visited = new HashSet<>();
 
@@ -75,7 +75,54 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     }
 
     public List<Coordinate> explore(int[][] image, Coordinate current, Set<Coordinate> visited) {
+        List<Coordinate> groupCords = new ArrayList<>();
+        if (visited.contains(current)) return groupCords;
+        visited.add(current);
 
+        List<Coordinate> neighbors = possiblePixels(image, current);
+
+        for(Coordinate neighbor : neighbors) {
+            groupCords.addAll(explore(image, neighbor, visited));
+        }
+
+        return groupCords;
+    }
+
+    
+    public List<Coordinate> possiblePixels(int[][] image, Coordinate current) {
+        List<Coordinate> possible = new ArrayList<>();
+        int row = current.y(), col = current.x();
+        int nRow, nCol;
+
+        // UP
+        nRow = row - 1;
+        nCol = col; 
+        if (nRow >= 0 && image[nRow][nCol] == 1) {
+            possible.add(new Coordinate(nRow, nCol));
+        }
+
+        // DOWN
+        nRow = row + 1;
+        nCol = col; 
+        if (nRow < image.length && image[nRow][nCol] == 1) {
+            possible.add(new Coordinate(nRow, nCol));
+        }
+
+        // LEFT
+        nRow = row;
+        nCol = col - 1; 
+        if (nCol >= 0 && image[nRow][nCol] == 1) {
+            possible.add(new Coordinate(nRow, nCol));
+        }
+
+        // RIGHT
+        nRow = row;
+        nCol = col + 1;
+        if (nCol < image[row].length && image[nRow][nCol] == 1) {
+            possible.add(new Coordinate(nRow, nCol));
+        }
+
+        return possible;
     }
     
 }
