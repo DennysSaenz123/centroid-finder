@@ -33,28 +33,48 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     */
     @Override
     public List<Group> findConnectedGroups(int[][] image) throws NullPointerException, IllegalArgumentException {
-        if(image == null) {
-            throw new NullPointerException("Input image cannot be null.");
-        }
+        if(image == null) throw new NullPointerException("Input image cannot be null.");
+
         for(int[] row : image) {
-            if(row == null) {
-                throw new NullPointerException("Input image cannot contain null rows.");
-            }
+            if(row == null) throw new NullPointerException("Input image cannot contain null rows.");
         }
+
         if(image.length == 0 || image[0].length == 0) {
             throw new IllegalArgumentException("Input image cannot be empty.");
         }
+        
         List<Group> groups = new ArrayList<>();
+        Set<Coordinate> visited = new HashSet<>();
 
+        for (int i = 0; i < image.length; i++) {
+            for (int j = 0; j < image[i].length; j++) {
+                if (image[i][j] == 1 && !visited.contains(new Coordinate(i, j))) {
+                    groups.add(findConnectedGroup(image, new Coordinate(i, j), visited));
+                }
+            }
+        }
 
+        return groups;
     }
 
 
-    public Group findConnectedGroup(int[][] image) {
+    public Group findConnectedGroup(int[][] image, Coordinate start, Set<Coordinate> visited) {
+        visited.add(start);
+        List<Coordinate> coordinates = explore(image, start, visited);
 
+        // calculate centroid
+        int x = 0, y = 0;
+        int pixels = coordinates.size();
+        for (Coordinate coordinate : coordinates) {
+            x += coordinate.x();
+            y += coordinate.y();
+        }
+        x = x / pixels;
+        y = y / pixels;
+        return new Group(pixels, new Coordinate(x, y));
     }
 
-    public Coordinate explore(int[][] image, Coordinate current, Set<Coordinate> visited) {
+    public List<Coordinate> explore(int[][] image, Coordinate current, Set<Coordinate> visited) {
 
     }
     
