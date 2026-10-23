@@ -54,10 +54,22 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
             }
         }
 
+        // TODO: Write an algorithm to sort groups into descending order
+        // (probably plageous)
+
         return groups;
     }
 
-
+    /**
+     * A helper method for findConnectedGroups.
+     * Calls the helper method explore() to find all Coordinates that are valid to a Group,
+     * then uses all the Coordinates to calculate the Group's size and centroid.
+     * 
+     * @param image A rectangular 2D array, containing only 1's and 0's.
+     * @param start The initial starting coordinate for the Group.
+     * @param visited A Set containing Coordinates of all visited pixels in the image.
+     * @return A Group object containing the Group size and it's centroid.
+     */
     public Group findConnectedGroup(int[][] image, Coordinate start, Set<Coordinate> visited) {
         visited.add(start);
         List<Coordinate> coordinates = explore(image, start, visited);
@@ -74,6 +86,16 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         return new Group(pixels, new Coordinate(x, y));
     }
 
+    /**
+     * A helper method for findConnectedGroup.
+     * Performs a depth-first search to find all Coordinates that are grouped together.
+     * Calls itself recursively to find neighboring valid pixels using possiblePixels().
+     * 
+     * @param image A rectangular 2D array, containing only 1's and 0's.
+     * @param current The current Coordinate object being explored.
+     * @param visited A Set containing Coordinates of all visited pixels in the image.
+     * @return A List of Coordinates for a valid Group
+     */
     public List<Coordinate> explore(int[][] image, Coordinate current, Set<Coordinate> visited) {
         List<Coordinate> groupCords = new ArrayList<>();
         if (visited.contains(current)) return groupCords;
@@ -88,7 +110,14 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         return groupCords;
     }
 
-    
+    /**
+     * A helper method for explore().
+     * Finds valid pixels adjacent to the current Coordinate.
+     * 
+     * @param image A rectangular 2D array, containing only 1's and 0's.
+     * @param current The Coordinate being used to find possible valid neighbors.
+     * @return A List of Coordinates with possible valid neighbors.
+     */
     public List<Coordinate> possiblePixels(int[][] image, Coordinate current) {
         List<Coordinate> possible = new ArrayList<>();
         int row = current.y(), col = current.x();
