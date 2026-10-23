@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.ArrayList;
 
 public class DfsBinaryGroupFinder implements BinaryGroupFinder {
    /**
@@ -29,7 +30,7 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
     * @return the found groups of connected pixels in descending order
     */
     @Override
-    public List<Group> findConnectedGroups(int[][] image) {
+    public List<Group> findConnectedGroups(int[][] image) throws NullPointerException, IllegalArgumentException {
         if(image == null) {
             throw new NullPointerException("Input image cannot be null.");
         }
