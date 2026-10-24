@@ -43,14 +43,25 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         if(image.length == 0 || image[0].length == 0) {
             throw new IllegalArgumentException("Input image cannot be empty.");
         }
+        
+        for (int[] row : image) {
+            if (row.length != image[0].length) {
+                throw new IllegalArgumentException("Input image must be rectangular.");
+            }
+            for (int value : row) {
+                if (value != 0 && value != 1) {
+                    throw new IllegalArgumentException("Input image can only contain 0s and 1s.");
+                }
+            }
+        }
 
         List<Group> groups = new ArrayList<>();
         Set<Coordinate> visited = new HashSet<>();
 
         for (int i = 0; i < image.length; i++) {
             for (int j = 0; j < image[i].length; j++) {
-                if (image[i][j] == 1 && !visited.contains(new Coordinate(i, j))) {
-                    groups.add(findConnectedGroup(image, new Coordinate(i, j), visited));
+                if (image[i][j] == 1 && !visited.contains(new Coordinate(j, i))) {
+                    groups.add(findConnectedGroup(image, new Coordinate(j, i), visited));
                 }
             }
         }
@@ -72,7 +83,6 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
      * @return A Group object containing the Group size and it's centroid.
      */
     public Group findConnectedGroup(int[][] image, Coordinate start, Set<Coordinate> visited) {
-        visited.add(start);
         List<Coordinate> coordinates = explore(image, start, visited);
 
         // calculate centroid
@@ -101,6 +111,7 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         List<Coordinate> groupCords = new ArrayList<>();
         if (visited.contains(current)) return groupCords;
         visited.add(current);
+        groupCords.add(current);
 
         List<Coordinate> neighbors = possiblePixels(image, current);
 
@@ -128,28 +139,28 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
         nRow = row - 1;
         nCol = col; 
         if (nRow >= 0 && image[nRow][nCol] == 1) {
-            possible.add(new Coordinate(nRow, nCol));
+            possible.add(new Coordinate(nCol, nRow));
         }
 
         // DOWN
         nRow = row + 1;
         nCol = col; 
         if (nRow < image.length && image[nRow][nCol] == 1) {
-            possible.add(new Coordinate(nRow, nCol));
+            possible.add(new Coordinate(nCol, nRow));
         }
 
         // LEFT
         nRow = row;
         nCol = col - 1; 
         if (nCol >= 0 && image[nRow][nCol] == 1) {
-            possible.add(new Coordinate(nRow, nCol));
+            possible.add(new Coordinate( nCol, nRow));
         }
 
         // RIGHT
         nRow = row;
         nCol = col + 1;
         if (nCol < image[row].length && image[nRow][nCol] == 1) {
-            possible.add(new Coordinate(nRow, nCol));
+            possible.add(new Coordinate( nCol, nRow));
         }
 
         return possible;
