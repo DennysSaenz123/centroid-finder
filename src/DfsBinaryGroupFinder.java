@@ -66,7 +66,6 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
             }
         }
 
-        // TODO: requires testing
         groups.sort(Collections.reverseOrder());
 
         return groups;
