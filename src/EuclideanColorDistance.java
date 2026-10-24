@@ -28,7 +28,7 @@ public class EuclideanColorDistance implements ColorDistanceFinder {
     }
 
     public int hexToR(int color) {
-        return (color / 65536) % 2;
+        return (color / 65536) % 256;
     }
 
     public int hexToG(int color) {
