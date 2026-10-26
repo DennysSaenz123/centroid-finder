@@ -188,6 +188,59 @@ public class DfsBinaryGroupFinderTest {
     // ---------- Shapes ----------
 
     @Test
+    public void testTwentyByTwentyGridReturnsAllGroupsLargestFirst() {
+        int[][] image = new int[20][20];
+        fillRectangle(image, 0, 0, 5, 5);
+        fillRectangle(image, 7, 0, 3, 4);
+        fillRectangle(image, 13, 0, 2, 2);
+        image[19][19] = 1;
+
+        List<Group> expected = List.of(
+            new Group(25, new Coordinate(2, 2)),
+            new Group(12, new Coordinate(8, 1)),
+            new Group(4, new Coordinate(13, 0)),
+            new Group(1, new Coordinate(19, 19))
+        );
+        List<Group> actual = finder.findConnectedGroups(image);
+
+        assertEquals(expected.size(), actual.size());
+        assertTrue(actual.containsAll(expected));
+        assertEquals(expected, actual);
+        assertDescendingGroupSizes(actual);
+    }
+
+    @Test
+    public void testTwentyByTwentyGridFindsIrregularShapesAndSortsBySize() {
+        int[][] image = new int[20][20];
+        fillRectangle(image, 0, 0, 3, 3);
+        image[1][1] = 0;
+
+        image[0][6] = 1;
+        image[0][7] = 1;
+        image[0][8] = 1;
+        image[1][7] = 1;
+        image[2][7] = 1;
+
+        fillRectangle(image, 13, 0, 1, 3);
+        fillRectangle(image, 17, 5, 2, 1);
+        image[19][19] = 1;
+
+        List<Group> expected = List.of(
+            new Group(8, new Coordinate(1, 1)),
+            new Group(5, new Coordinate(7, 0)),
+            new Group(3, new Coordinate(13, 1)),
+            new Group(2, new Coordinate(17, 5)),
+            new Group(1, new Coordinate(19, 19))
+        );
+        List<Group> actual = finder.findConnectedGroups(image);
+
+        assertEquals(expected.size(), actual.size());
+        assertTrue(actual.containsAll(expected));
+        assertEquals(expected, actual);
+        assertDescendingGroupSizes(actual);
+    }
+
+    @Test
     public void testWideGrid() {
         int[][] image = {
             {1, 1, 1, 1, 1}
@@ -276,5 +329,22 @@ public class DfsBinaryGroupFinderTest {
         };
 
         assertThrows(IllegalArgumentException.class, () -> finder.findConnectedGroups(image));
+    }
+
+    private void fillRectangle(int[][] image, int x, int y, int width, int height) {
+        for (int row = y; row < y + height; row++) {
+            for (int column = x; column < x + width; column++) {
+                image[row][column] = 1;
+            }
+        }
+    }
+
+    private void assertDescendingGroupSizes(List<Group> groups) {
+        for (int i = 1; i < groups.size(); i++) {
+            assertTrue(
+                groups.get(i - 1).size() >= groups.get(i).size(),
+                "Group sizes should be in descending order"
+            );
+        }
     }
 }

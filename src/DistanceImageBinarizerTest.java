@@ -47,4 +47,86 @@ public class DistanceImageBinarizerTest {
 
         assertArrayEquals(expected, actual);
     }
+
+    @Test
+    public void testToBufferedImageAllBlack() {
+        DistanceImageBinarizer binarizer = new DistanceImageBinarizer((a, b) -> 0, 0, 0);
+
+        BufferedImage actual = binarizer.toBufferedImage(new int[][] {{0}});
+
+        assertEquals(1, actual.getWidth());
+        assertEquals(1, actual.getHeight());
+        assertEquals(BufferedImage.TYPE_INT_RGB, actual.getType());
+        assertEquals(0xFF000000, actual.getRGB(0, 0));
+    }
+
+    @Test
+    public void testToBufferedImageAllWhite() {
+        DistanceImageBinarizer binarizer = new DistanceImageBinarizer((a, b) -> 0, 0, 0);
+
+        BufferedImage actual = binarizer.toBufferedImage(new int[][] {{1}});
+
+        assertEquals(1, actual.getWidth());
+        assertEquals(1, actual.getHeight());
+        assertEquals(BufferedImage.TYPE_INT_RGB, actual.getType());
+        assertEquals(0xFFFFFFFF, actual.getRGB(0, 0));
+    }
+
+    @Test
+    public void testToBufferedImageMixedNonSquarePattern() {
+        DistanceImageBinarizer binarizer = new DistanceImageBinarizer((a, b) -> 0, 0, 0);
+        int[][] binary = {
+            {1, 0, 1, 1},
+            {0, 1, 0, 0},
+            {1, 1, 0, 1}
+        };
+        int[][] expected = {
+            {0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF, 0xFFFFFFFF},
+            {0xFF000000, 0xFFFFFFFF, 0xFF000000, 0xFF000000},
+            {0xFFFFFFFF, 0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF}
+        };
+
+        BufferedImage actual = binarizer.toBufferedImage(binary);
+
+        assertEquals(4, actual.getWidth());
+        assertEquals(3, actual.getHeight());
+        assertImagePixels(expected, actual);
+    }
+
+    @Test
+    public void testToBufferedImageIrregularPatternPreservesInput() {
+        DistanceImageBinarizer binarizer = new DistanceImageBinarizer((a, b) -> 0, 0, 0);
+        int[][] binary = {
+            {0, 0, 1, 0, 1},
+            {1, 0, 1, 1, 0},
+            {0, 1, 0, 1, 0},
+            {1, 1, 1, 0, 0}
+        };
+        int[][] original = new int[binary.length][];
+        for (int y = 0; y < binary.length; y++) {
+            original[y] = binary[y].clone();
+        }
+        int[][] expected = {
+            {0xFF000000, 0xFF000000, 0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF},
+            {0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF000000},
+            {0xFF000000, 0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF, 0xFF000000},
+            {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF000000, 0xFF000000}
+        };
+
+        BufferedImage actual = binarizer.toBufferedImage(binary);
+
+        assertEquals(BufferedImage.TYPE_INT_RGB, actual.getType());
+        assertEquals(5, actual.getWidth());
+        assertEquals(4, actual.getHeight());
+        assertImagePixels(expected, actual);
+        assertArrayEquals(original, binary);
+    }
+
+    private void assertImagePixels(int[][] expected, BufferedImage actual) {
+        for (int y = 0; y < expected.length; y++) {
+            for (int x = 0; x < expected[y].length; x++) {
+                assertEquals(expected[y][x], actual.getRGB(x, y), "pixel at (" + x + ", " + y + ")");
+            }
+        }
+    }
 }
