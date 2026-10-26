@@ -45,19 +45,19 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public int[][] toBinaryArray(BufferedImage image) {
-        //columns
+        // columns
         int width = image.getWidth();
-        //rows
+        // rows
         int height = image.getHeight();
-        //Array[col][rows]
-        int[][] binary =  new int [height][width];
+        // Array[rows][columns]
+        int[][] binary =  new int[height][width];
 
-        //loop thru rows and columns
-        for(int y =0; y < height; y++){
-            for(int x = 0; x < width; x++){
-                //Get the pixel color, then drop alpha bits
+        // loop thru rows and columns
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // Get the pixel color, then drop alpha bits
                 int pixColor = image.getRGB(x, y) & 0xFFFFFF;
-                //Distance between pixColor from targwet
+                // Distance between pixColor from target
                 double dis = distanceFinder.distance(pixColor, targetColor);
 
                 if (dis < threshold) {
@@ -82,6 +82,9 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public BufferedImage toBufferedImage(int[][] image) {
-        return null;
+        int height = image.length, width = image[0].length;
+        BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+
     }
 }
