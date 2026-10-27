@@ -1,4 +1,4 @@
-package test;
+package test.java;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import main.Coordinate;
-import main.DfsBinaryGroupFinder;
-import main.Group;
+import main.java.Coordinate;
+import main.java.DfsBinaryGroupFinder;
+import main.java.Group;
 
 public class DfsBinaryGroupFinderTest {
 
