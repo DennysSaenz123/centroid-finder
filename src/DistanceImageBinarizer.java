@@ -45,6 +45,9 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public int[][] toBinaryArray(BufferedImage image) {
+
+        // TODO: REWRITE TO USE DFS INSTEAD OF WHAT WE HAVE NOW
+
         // columns
         int width = image.getWidth();
         // rows
@@ -82,6 +85,9 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public BufferedImage toBufferedImage(int[][] image) {
+
+        // TODO: REWRITE TO USE DFS INSTEAD OF WHAT WE HAVE NOW
+
         int height = image.length, width = image[0].length, white = 0xFFFFFF, black = 0x000000;
         BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
