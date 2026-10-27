@@ -1,3 +1,4 @@
+package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.image.BufferedImage;
@@ -7,6 +8,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+import main.BinarizingImageGroupFinder;
+import main.Coordinate;
+import main.DfsBinaryGroupFinder;
+import main.DistanceImageBinarizer;
+import main.EuclideanColorDistance;
+import main.Group;
 
 public class BinarizingImageGroupFinderTest {
     private final BinarizingImageGroupFinder finder = new BinarizingImageGroupFinder(
