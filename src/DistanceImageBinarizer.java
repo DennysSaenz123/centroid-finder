@@ -1,5 +1,8 @@
 import java.awt.image.BufferedImage;
-
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 /**
  * An implementation of the ImageBinarizer interface that uses color distance
  * to determine whether each pixel should be black or white in the binary image.
@@ -85,10 +88,16 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public BufferedImage toBufferedImage(int[][] image) {
+        int height = image.length, width = image[0].length, white = 0xFFFFFF;
+        List<Coordinate> white_pixels = new ArrayList<>();
+        Set<Coordinate> visited = new HashSet<>();
 
-        // TODO: REWRITE TO USE DFS INSTEAD OF WHAT WE HAVE NOW
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                white_pixels.add(explore(image, new Coordinate(x, y), visited));
+            }
+        }
 
-        int height = image.length, width = image[0].length, white = 0xFFFFFF, black = 0x000000;
         BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         for (int y = 0; y < height; y++) {
