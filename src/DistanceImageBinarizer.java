@@ -88,24 +88,22 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public BufferedImage toBufferedImage(int[][] image) {
+        // variables for readability and speed
         int height = image.length, width = image[0].length, white = 0xFFFFFF;
-        List<Coordinate> white_pixels = new ArrayList<>();
+        // visited pixels
         Set<Coordinate> visited = new HashSet<>();
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                white_pixels.add(explore(image, new Coordinate(x, y), visited));
-            }
-        }
-
+        // finder used to explore 2D image array
+        DfsBinaryGroupFinder finder = new DfsBinaryGroupFinder();
+        // output image
         BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
+        // essentially the loop for findConnectedGroups, just made for image reconstruction
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (image[y][x] == 1) {
-                    output.setRGB(x, y, white);
-                } else {
-                    output.setRGB(x, y, black);
+                    for (Coordinate pixel : finder.explore(image, new Coordinate(x, y), visited)) {
+                        output.setRGB(pixel.x(), pixel.y(), white);
+                    }
                 }
             }
         }
