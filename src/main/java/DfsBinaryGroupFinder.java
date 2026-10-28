@@ -1,9 +1,11 @@
 package main.java;
 import java.util.List;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collections;
+import java.util.Deque;
 
 public class DfsBinaryGroupFinder implements BinaryGroupFinder {
    /**
@@ -109,14 +111,22 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
      */
     public List<Coordinate> explore(int[][] image, Coordinate current, Set<Coordinate> visited) {
         List<Coordinate> groupCords = new ArrayList<>();
-        if (visited.contains(current)) return groupCords;
-        visited.add(current);
-        groupCords.add(current);
+        Deque<Coordinate> stack = new ArrayDeque<>();
 
-        List<Coordinate> neighbors = possiblePixels(image, current);
+        stack.push(current);
 
-        for(Coordinate neighbor : neighbors) {
-            groupCords.addAll(explore(image, neighbor, visited));
+        while (!stack.isEmpty()) {
+           Coordinate pixel = stack.pop();
+            if (!visited.add(pixel)) continue;
+            groupCords.add(pixel);
+
+            List<Coordinate> neighbors = possiblePixels(image, pixel);
+
+            for (Coordinate neighbor : neighbors) {
+                if (!visited.contains(neighbor)) {
+                    stack.push(neighbor);
+                }
+            }
         }
 
         return groupCords;
