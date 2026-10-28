@@ -48,9 +48,6 @@ public class DistanceImageBinarizer implements ImageBinarizer {
      */
     @Override
     public int[][] toBinaryArray(BufferedImage image) {
-
-        // TODO: REWRITE TO USE DFS INSTEAD OF WHAT WE HAVE NOW
-
         // columns
         int width = image.getWidth();
         // rows
@@ -69,9 +66,6 @@ public class DistanceImageBinarizer implements ImageBinarizer {
                 if (dis < threshold) {
                     // close to the target color, so white
                     binary[y][x] = 1;
-                } else {
-                    // too far from the target color, so black
-                    binary[y][x] = 0;
                 }
             }
         }
