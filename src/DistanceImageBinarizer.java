@@ -100,7 +100,7 @@ public class DistanceImageBinarizer implements ImageBinarizer {
         // essentially the loop for findConnectedGroups, just made for image reconstruction
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (image[y][x] == 1) {
+                if (image[y][x] == 1 && !visited.contains(new Coordinate(x, y))) {
                     for (Coordinate pixel : finder.explore(image, new Coordinate(x, y), visited)) {
                         output.setRGB(pixel.x(), pixel.y(), white);
                     }
