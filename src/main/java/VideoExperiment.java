@@ -1,34 +1,42 @@
 package main.java;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 
-import javax.imageio.ImageIO;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.Java2DFrameConverter;
 
 public class VideoExperiment {
     public static void main(String[] args) {
         
-        String sampleImageDir = "sampleInput/squares.jpg";
         String sampleVideoDir = "sampleInput/kitten.mp4";
-        BufferedImage inputImage = null;
-        BufferedImage inputVideo = null;
+        FFmpegFrameGrabber grabber = null;
 
-        // catch load failure for image
-        try {
-            inputImage = ImageIO.read(new File(sampleImageDir));
-        } catch (Exception e) {
-            System.err.println("Error loading image: " + sampleImageDir);
-            e.printStackTrace();
-            return;
-        }
         // catch load failure for video
         try {
-            inputVideo = ImageIO.read(new File(sampleVideoDir));
+            grabber = new FFmpegFrameGrabber(sampleVideoDir);
+            grabber.start();
         } catch (Exception e) {
-            System.err.println("Error loading video: " + sampleVideoDir);
+            System.err.println("FFmpegFrameGrabber failed to start. File path: " + sampleVideoDir);
             e.printStackTrace();
             return;
         }
-        
+
+        // observe as Herbert becomes green!!!!!
+
+        Frame frame = null;
+        try {
+            frame = grabber.grabImage();
+            if (frame == null) throw new Exception("Frame is null.");
+        } catch (Exception e) {
+            System.out.println("Failed to grab frame. Aborting...");
+            e.printStackTrace();
+            return;
+        }
+
+        Java2DFrameConverter frameConverter = new Java2DFrameConverter();
+        BufferedImage image = frameConverter.convert(frame);
+
+        // now for the greenification
     }
 }
