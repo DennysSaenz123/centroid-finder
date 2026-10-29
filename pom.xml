@@ -23,9 +23,8 @@
     <!-- Source: https://mvnrepository.com/artifact/org.bytedeco/javacv -->
     <dependency>
         <groupId>org.bytedeco</groupId>
-        <artifactId>javacv</artifactId>
+        <artifactId>javacv-platform</artifactId>
         <version>1.5.14</version>
-        <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -42,7 +41,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.5.0</version>
         <configuration>
-          <mainClass>VideoExperiment</mainClass>
+          <mainClass>main.java.VideoExperiment</mainClass>
         </configuration>
       </plugin>
     
