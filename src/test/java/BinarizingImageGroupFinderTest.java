@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import main.java.BinarizingImageGroupFinder;
-import main.java.Coordinate;
-import main.java.DfsBinaryGroupFinder;
-import main.java.DistanceImageBinarizer;
-import main.java.EuclideanColorDistance;
-import main.java.Group;
+import main.java.image.BinarizingImageGroupFinder;
+import main.java.image.Coordinate;
+import main.java.image.DfsBinaryGroupFinder;
+import main.java.image.DistanceImageBinarizer;
+import main.java.image.EuclideanColorDistance;
+import main.java.image.Group;
 
 public class BinarizingImageGroupFinderTest {
     private final BinarizingImageGroupFinder finder = new BinarizingImageGroupFinder(

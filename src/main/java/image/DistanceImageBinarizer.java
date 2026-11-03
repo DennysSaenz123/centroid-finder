@@ -1,4 +1,4 @@
-package main.java;
+package main.java.image;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.HashSet;

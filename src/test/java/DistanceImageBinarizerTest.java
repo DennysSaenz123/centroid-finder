@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 
 import org.junit.jupiter.api.Test;
 
-import main.java.ColorDistanceFinder;
-import main.java.DistanceImageBinarizer;
+import main.java.image.ColorDistanceFinder;
+import main.java.image.DistanceImageBinarizer;
 
 public class DistanceImageBinarizerTest {
 

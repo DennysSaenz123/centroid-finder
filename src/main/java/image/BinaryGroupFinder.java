@@ -1,4 +1,4 @@
-package main.java;
+package main.java.image;
 import java.util.List;
 
 public interface BinaryGroupFinder {

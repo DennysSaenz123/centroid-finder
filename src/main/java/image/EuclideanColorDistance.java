@@ -1,4 +1,4 @@
-package main.java;
+package main.java.image;
 public class EuclideanColorDistance implements ColorDistanceFinder {
 
     /**
