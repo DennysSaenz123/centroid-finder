@@ -26,3 +26,5 @@ for (frame in frames) {
 }
 
 csv.output(biggestframe);
+
+java -jar videoprocesser.jar inputPath outputCsv targetColor threshold
