@@ -41,7 +41,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.5.0</version>
         <configuration>
-          <mainClass>main.java.video.VideoExperiment</mainClass>
+          <mainClass>video.VideoExperiment</mainClass>
         </configuration>
       </plugin>
     
