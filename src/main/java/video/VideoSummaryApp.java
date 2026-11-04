@@ -75,6 +75,8 @@ public class VideoSummaryApp {
         // output list which will have its values put into the .csv file.
         List<TimedGroup> groups = null;
         
+        System.out.println("\n\nStarting video processing...\n\n");
+
         // process the video!
         // kills if any exceptions are thrown (likely from the frame grabber breaking)
         try (FrameSource source = new JavaCvFrameSource(inputPath)) {
@@ -84,6 +86,8 @@ public class VideoSummaryApp {
             e.printStackTrace();
             return;
         }
+
+        System.out.println("\n\nVideo processed! Outputting .csv file...\n\n");
 
         // output as a .csv
         try (PrintWriter writer = new PrintWriter(outputPath)) {

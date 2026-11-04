@@ -15,6 +15,7 @@ public class VideoSummarizer {
         TimedFrame frame;
         while ((frame = source.nextFrame()) != null) {
             results.add(locator.locate(frame));
+            System.out.println("Processed frame at " + frame.seconds() + " seconds.");
         }
         return results;
     }
