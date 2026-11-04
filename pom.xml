@@ -44,6 +44,10 @@
           <mainClass>video.VideoSummaryApp</mainClass>
         </configuration>
       </plugin>
+
+      <plugin>
+      <!-- Maven Assembly goes here -->
+      </plugin>
     
     </plugins>
   </build>
