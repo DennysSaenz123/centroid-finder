@@ -57,12 +57,20 @@ public class VideoSummaryApp {
         ColorDistanceFinder distFinder = new EuclideanColorDistance();
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
 
+        JavaCvFrameSource frameProcessor = new JavaCvFrameSource(grabber, binarizer);
+
+        List<TimedGroup> groups = null;
         
-
-        List<Group> groups = null;
-
+        try {
+            frameProcessor.process();
+        } catch (Exception e) {
+            System.out.println("Failed to process image.");
+            e.printStackTrace();
+            return;
+        }
+        
         try (PrintWriter writer = new PrintWriter(outputPath)) {
-            for (Group group : groups) {
+            for (TimedGroup group : groups) {
                 writer.println(group.toCsvRow());
             }
             System.out.println("Groups summary saved as " + outputPath + ".");
