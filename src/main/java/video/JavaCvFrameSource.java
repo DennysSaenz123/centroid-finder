@@ -1,18 +1,9 @@
 package video;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
-import image.Group;
-import image.Coordinate;
-import image.ImageBinarizer;
-import image.ImageGroupFinder;
-import image.BinarizingImageGroupFinder;
-import image.DfsBinaryGroupFinder;
 
 public class JavaCvFrameSource implements FrameSource {
 
@@ -22,16 +13,9 @@ public class JavaCvFrameSource implements FrameSource {
     // Turns each Frame into a BufferedImage that the image/centroid code understands
     private final Java2DFrameConverter converter = new Java2DFrameConverter();
 
-    // Image binarizer to process incoming frames and to output Lists of Groups.
-    private final ImageBinarizer binarizer;
-
-    // Finds Groups within a binarized image. Instantiated on construction.
-    private final ImageGroupFinder groupFinder;
-
-    public JavaCvFrameSource(FFmpegFrameGrabber grabber, ImageBinarizer binarizer) {
-        this.grabber = grabber;
-        this.binarizer = binarizer;
-        groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
+    public JavaCvFrameSource(String path) throws Exception{
+        grabber = new FFmpegFrameGrabber(path);
+        grabber.start();
     }
     
     @Override
@@ -58,34 +42,5 @@ public class JavaCvFrameSource implements FrameSource {
         grabber.release();
         // Free the converter's internal buffers
         converter.close();
-    }
-
-    // 
-    public List<TimedGroup> process() throws Exception {
-        // Node current = head;
-        TimedFrame currentFrame = nextFrame();
-        // output list
-        List<TimedGroup> orderedGroups = new ArrayList<>();
-
-        // keep looping while there's still frames left;
-        while (currentFrame != null) {
-            List<Group> currentGroups = groupFinder.findConnectedGroups(currentFrame.image());
-
-            // if no centroid, create an "empty" value and add it to currentGroups
-            if (currentGroups.size() == 0) {
-                currentGroups.add(new Group(0, new Coordinate(-1, -1)));
-            }
-
-            // add largest (first) Group to output list.
-            // this Group will have a (-1,-1) Centroid if the image doesn't have a group.
-            // Groups are automatically sorted in findConnectedGroups.
-            orderedGroups.add(new TimedGroup(currentFrame.seconds(), currentGroups.getFirst()));
-            // current = current.next;
-            currentFrame = nextFrame();
-        }
-
-        // cleanup method.
-        this.close();
-        return orderedGroups;
     }
 }
