@@ -54,13 +54,18 @@ public class VideoSummaryApp {
 
         // args are valid! move onto calling proper classes and functions.
 
+        // instances for frameProcesser
         ColorDistanceFinder distFinder = new EuclideanColorDistance();
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
 
+        // construct processor
         JavaCvFrameSource frameProcessor = new JavaCvFrameSource(grabber, binarizer);
 
+        // output list which will have its values put into the .csv file.
         List<TimedGroup> groups = null;
         
+        // process the video!
+        // kills if any exceptions are thrown (likely from the frame grabber breaking)
         try {
             groups = frameProcessor.process();
         } catch (Exception e) {
@@ -69,6 +74,7 @@ public class VideoSummaryApp {
             return;
         }
 
+        // output as a .csv
         try (PrintWriter writer = new PrintWriter(outputPath)) {
             for (TimedGroup group : groups) {
                 writer.println(group.toCsvRow());
