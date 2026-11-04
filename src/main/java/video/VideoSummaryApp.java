@@ -1,19 +1,23 @@
-package main.java.video;
+package video;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.util.List;
+
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 
-import main.java.image.EuclideanColorDistance;
-import main.java.image.DistanceImageBinarizer;
-import main.java.image.ImageBinarizer;
-import main.java.image.ColorDistanceFinder;
+import image.EuclideanColorDistance;
+import image.DistanceImageBinarizer;
+import image.ImageBinarizer;
+import image.ColorDistanceFinder;
+import image.Group;
 
 public class VideoSummaryApp {
     public static void main(String[] args) {
 
         // check for valid args
         if (args.length != 4) {
-            System.out.println("Improper usage!\nCorrect usage: java VideoSummaryApp <input_video_path> <output_csv_path> <target_color_hexcode> <threshold>");
+            System.out.println("Improper usage!\nCorrect usage: java VideoSummaryApp <input_video_path> <output_csv> <target_color_hexcode> <threshold>");
         }
 
         String inputPath = args[0];
@@ -54,5 +58,17 @@ public class VideoSummaryApp {
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
 
         
+
+        List<Group> groups = null;
+
+        try (PrintWriter writer = new PrintWriter(outputPath)) {
+            for (Group group : groups) {
+                writer.println(group.toCsvRow());
+            }
+            System.out.println("Groups summary saved as " + outputPath + ".");
+        } catch (Exception e) {
+            System.err.println("Error writing " + outputPath + ".");
+            e.printStackTrace();
+        }
     }   
 }

@@ -4,6 +4,11 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
+import image.ImageBinarizer;
+import image.ImageGroupFinder;
+import image.BinarizingImageGroupFinder;
+import image.DfsBinaryGroupFinder;
+
 public class JavaCvFrameSource implements FrameSource {
 
     // Reads frames from the video file; final because it's set once in the constructor
@@ -12,14 +17,19 @@ public class JavaCvFrameSource implements FrameSource {
     // Turns each Frame into a BufferedImage that the image/centroid code understands
     private final Java2DFrameConverter converter = new Java2DFrameConverter();
 
-    // Constructor: opens the video at the given path and gets it ready to read
-    public JavaCvFrameSource(String path) throws Exception {
-        // Create a grabber pointed at the video file
-        grabber = new FFmpegFrameGrabber(path);
-        // Open the file and start decoding; throws if the file is missing or unreadable
-        grabber.start();
+    // Image binarizer to process incoming frames and to output Lists of Groups.
+    private final ImageBinarizer binarizer;
+
+    // Finds Groups within a binarized image. Instantiated on construction.
+    private final ImageGroupFinder groupFinder;
+
+    public JavaCvFrameSource(FFmpegFrameGrabber grabber, ImageBinarizer binarizer) {
+        this.grabber = grabber;
+        this.binarizer = binarizer;
+        groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
     }
-// Required by FrameSource: returns the next frame with its timestamp, or null at the end
+
+    
     @Override
     public TimedFrame nextFrame() throws Exception {
         // Grab the next video frame only (grab() would also return audio frames)
@@ -34,7 +44,9 @@ public class JavaCvFrameSource implements FrameSource {
         // Convert the frame to a BufferedImage and pair it with its time
         return new TimedFrame(seconds, converter.convert(frame));
     }
+    
     // Required by AutoCloseable: runs automatically at the end of a try-with-resources block
+    
     @Override
     public void close() throws Exception {
         // Stop decoding the video
@@ -43,4 +55,5 @@ public class JavaCvFrameSource implements FrameSource {
         grabber.release();
         // Free the converter's internal buffers
         converter.close();
-    };
+    }
+}
