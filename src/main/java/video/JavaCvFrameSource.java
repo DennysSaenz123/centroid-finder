@@ -67,22 +67,16 @@ public class JavaCvFrameSource implements FrameSource {
 
         // keep looping while there's still frames left;
         while (currentFrame != null) {
-            List<Group> currentGroup = groupFinder.findConnectedGroups(currentFrame.image());
+            List<Group> currentGroups = groupFinder.findConnectedGroups(currentFrame.image());
 
             // if no centroid, create a nullified value
-            if (currentGroup.size() == 0) {
-                orderedGroups.add(
-                    new TimedGroup(currentFrame.seconds(), new Group(
-                            0, new Coordinate(-1, -1)
-                        )
-                    )
-                );
-                continue;
+            if (currentGroups.size() == 0) {
+                currentGroups.add(new Group(0, new Coordinate(-1, -1)));
             }
 
             // add largest (first) Group to output list
             // groups are automatically sorted in findConnectedGroups
-            orderedGroups.add(new TimedGroup(currentFrame.seconds(), currentGroup.getFirst()));
+            orderedGroups.add(new TimedGroup(currentFrame.seconds(), currentGroups.getFirst()));
             // current = current.next;
             currentFrame = nextFrame();
         }
