@@ -62,13 +62,13 @@ public class VideoSummaryApp {
         List<TimedGroup> groups = null;
         
         try {
-            frameProcessor.process();
+            groups = frameProcessor.process();
         } catch (Exception e) {
             System.out.println("Failed to process image.");
             e.printStackTrace();
             return;
         }
-        
+
         try (PrintWriter writer = new PrintWriter(outputPath)) {
             for (TimedGroup group : groups) {
                 writer.println(group.toCsvRow());
