@@ -1,4 +1,4 @@
-package main.java.image;
+package image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;

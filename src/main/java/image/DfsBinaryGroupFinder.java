@@ -1,4 +1,4 @@
-package main.java.image;
+package image;
 import java.util.List;
 import java.util.ArrayDeque;
 import java.util.ArrayList;

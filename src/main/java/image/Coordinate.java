@@ -1,4 +1,4 @@
-package main.java.image;
+package image;
 /**
  * Represents a location in an image or array
  * 
