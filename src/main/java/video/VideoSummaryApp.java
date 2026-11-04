@@ -1,5 +1,6 @@
 package video;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -23,6 +24,21 @@ public class VideoSummaryApp {
         String inputPath = args[0];
         String outputPath = args[1];
         String targetColorHex = args[2];
+
+        // check if the input path actually exists
+        File inputFile = new File(inputPath);
+        if (!inputFile.exists()) {
+            System.err.println("Input file at " + inputFile.getAbsolutePath() + " does not exist.");
+            return;
+        }
+        if (!inputFile.isFile()) {
+            System.err.println("Input path at " + inputFile.getAbsolutePath() + " is not a file. (Is it a directory?)");
+            return;
+        }
+        if (!inputFile.canRead()) {
+            System.err.println("Input file at " + inputFile.getAbsolutePath() + " could not be read.");
+            return;
+        }
 
         // check if targetColorHex is actually hexidecimal in the proper format.
         int targetColor = 0;

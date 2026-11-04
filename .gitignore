@@ -29,3 +29,6 @@ target
 # image
 binarized.png
 greenKitten.png
+
+# outputs
+output.csv
