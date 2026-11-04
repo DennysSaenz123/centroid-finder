@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import main.java.image.Coordinate;
-import main.java.image.DfsBinaryGroupFinder;
-import main.java.image.Group;
+import image.Coordinate;
+import image.DfsBinaryGroupFinder;
+import image.Group;
 
 public class DfsBinaryGroupFinderTest {
 
