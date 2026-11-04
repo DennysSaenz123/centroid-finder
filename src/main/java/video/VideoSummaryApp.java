@@ -2,46 +2,55 @@ package video;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.ArrayList;
 
-import image.EuclideanColorDistance;
-import image.DistanceImageBinarizer;
-import image.ImageBinarizer;
+import image.BinarizingImageGroupFinder;
 import image.ColorDistanceFinder;
 import image.DfsBinaryGroupFinder;
-import image.BinarizingImageGroupFinder;
+import image.DistanceImageBinarizer;
+import image.EuclideanColorDistance;
+import image.ImageBinarizer;
 import image.ImageGroupFinder;
 
 public class VideoSummaryApp {
     public static void main(String[] args) {
 
-        // check for valid args
-        if (args.length != 4) {
-            System.out.println("Improper usage!\nCorrect usage: java VideoSummaryApp <input_video_path> <output_csv> <target_color_hexcode> <threshold>");
+        if (args.length != 4 && args.length != 5) {
+            System.err.println("Improper usage!\nCorrect usage: java VideoSummaryApp <input_video_path> <output_csv> <target_color_hexcode> <threshold> [output_video_path]");
             return;
         }
 
         String inputPath = args[0];
         String outputPath = args[1];
         String targetColorHex = args[2];
+        // optional: where to write the binarized video (null means don't write one)
+        String outputVideoPath = args.length == 5 ? args[4] : null;
 
-        // check if the input path actually exists
+        // validate the input file before doing any work
         File inputFile = new File(inputPath);
         if (!inputFile.exists()) {
-            System.err.println("Input file at " + inputFile.getAbsolutePath() + " does not exist.");
+            System.err.println("Input file does not exist: " + inputFile.getAbsolutePath());
             return;
         }
         if (!inputFile.isFile()) {
-            System.err.println("Input path at " + inputFile.getAbsolutePath() + " is not a file. (Is it a directory?)");
+            System.err.println("Input path is not a file (is it a directory?): " + inputFile.getAbsolutePath());
             return;
         }
         if (!inputFile.canRead()) {
-            System.err.println("Input file at " + inputFile.getAbsolutePath() + " could not be read.");
+            System.err.println("Input file is not readable: " + inputFile.getAbsolutePath());
             return;
         }
 
-        // check if targetColorHex is actually hexidecimal in the proper format.
-        int targetColor = 0;
+        // validate the output video's folder up front, not after processing the whole video
+        if (outputVideoPath != null) {
+            File parent = new File(outputVideoPath).getAbsoluteFile().getParentFile();
+            if (parent != null && !parent.isDirectory()) {
+                System.err.println("Output video directory does not exist: " + parent.getAbsolutePath());
+                return;
+            }
+        }
+
+        int targetColor;
         try {
             targetColor = Integer.parseInt(targetColorHex, 16);
         } catch (NumberFormatException e) {
@@ -49,43 +58,41 @@ public class VideoSummaryApp {
             return;
         }
 
-        // check if threshold is an integer
-        int threshold = 0;
+        int threshold;
         try {
             threshold = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            System.out.println("Threshold must be an integer!");
+            System.err.println("Threshold must be an integer!");
             return;
         }
 
-        // args are valid! move onto calling proper classes and functions.
-
-        // creating our pipelines for frame processing...
+        // build the image pipeline
         ColorDistanceFinder distFinder = new EuclideanColorDistance();
-        // turns images into 2D binary arrays
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
-        // finds groups of identified pixels
         ImageGroupFinder groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
 
-        // finds the largest Group
         LargestCentroidLocator locator = new LargestCentroidLocator(groupFinder);
-        // loops through every frame in the video and returns its largest Group per frame
         VideoSummarizer summarizer = new VideoSummarizer(locator);
 
-        // output list which will have its values put into the .csv file.
-        List<TimedGroup> groups = null;
-        
-        // process the video!
-        // kills if any exceptions are thrown (likely from the frame grabber breaking)
-        try (FrameSource source = new JavaCvFrameSource(inputPath)) {
-            groups = summarizer.process(source);
+        // process the video; try-with-resources closes both resources (writer first, then source).
+        // A null resource is simply skipped, so no video is written when outputVideoPath is null.
+        ArrayList<TimedGroup> groups;
+        try (FrameSource source = new JavaCvFrameSource(inputPath);
+             BinarizedVideoWriter writer = outputVideoPath == null ? null
+                     : new BinarizedVideoWriter(outputVideoPath, source.getWidth(), source.getHeight(),
+                             source.getFrameRate(), binarizer)) {
+            groups = summarizer.process(source, writer);
         } catch (Exception e) {
-            System.out.println("Failed to process video at " + inputPath);
+            System.err.println("Failed to process video at: " + inputPath);
             e.printStackTrace();
             return;
         }
 
-        // output as a .csv
+        if (outputVideoPath != null) {
+            System.out.println("Binarized video saved as " + outputVideoPath + ".");
+        }
+
+        // write the CSV
         try (PrintWriter writer = new PrintWriter(outputPath)) {
             for (TimedGroup group : groups) {
                 writer.println(group.toCsvRow());
@@ -95,5 +102,5 @@ public class VideoSummaryApp {
             System.err.println("Error writing " + outputPath + ".");
             e.printStackTrace();
         }
-    }   
+    }
 }

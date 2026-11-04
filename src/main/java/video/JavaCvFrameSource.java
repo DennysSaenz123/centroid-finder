@@ -32,6 +32,22 @@ public class JavaCvFrameSource implements FrameSource {
         // Convert the frame to a BufferedImage and pair it with its time
         return new TimedFrame(seconds, converter.convert(frame));
     }
+
+    // Video frame rate, available once the grabber has started
+    @Override
+    public double getFrameRate() {
+        return grabber.getFrameRate();
+    }
+
+    @Override
+    public int getWidth() {
+        return grabber.getImageWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return grabber.getImageHeight();
+    }
     
     // Required by AutoCloseable: runs automatically at the end of a try-with-resources block
     @Override
