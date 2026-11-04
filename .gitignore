@@ -32,4 +32,6 @@ sampleInput/kitten.mp4
 
 # outputs
 output.csv
+out.csv
 greenKitten.png
+binarized.mp4
