@@ -1,9 +1,13 @@
 package video;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
+import image.Group;
 import image.ImageBinarizer;
 import image.ImageGroupFinder;
 import image.BinarizingImageGroupFinder;
@@ -28,7 +32,6 @@ public class JavaCvFrameSource implements FrameSource {
         this.binarizer = binarizer;
         groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
     }
-
     
     @Override
     public TimedFrame nextFrame() throws Exception {
@@ -46,7 +49,6 @@ public class JavaCvFrameSource implements FrameSource {
     }
     
     // Required by AutoCloseable: runs automatically at the end of a try-with-resources block
-    
     @Override
     public void close() throws Exception {
         // Stop decoding the video
@@ -55,5 +57,17 @@ public class JavaCvFrameSource implements FrameSource {
         grabber.release();
         // Free the converter's internal buffers
         converter.close();
+    }
+
+    // 
+    public List<TimedGroup> process() throws Exception {
+        TimedFrame current = nextFrame();
+        List<TimedGroup> orderedGroups = new ArrayList<>();
+
+        while (current != null) {
+            
+        }
+
+        return orderedGroups;
     }
 }
