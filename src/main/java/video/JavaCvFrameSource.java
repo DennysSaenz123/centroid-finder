@@ -8,6 +8,7 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
 import image.Group;
+import image.Coordinate;
 import image.ImageBinarizer;
 import image.ImageGroupFinder;
 import image.BinarizingImageGroupFinder;
@@ -61,13 +62,32 @@ public class JavaCvFrameSource implements FrameSource {
 
     // 
     public List<TimedGroup> process() throws Exception {
-        TimedFrame current = nextFrame();
+        TimedFrame currentFrame = nextFrame();
         List<TimedGroup> orderedGroups = new ArrayList<>();
 
-        while (current != null) {
-            
+        // keep looping while there's still frames left;
+        while (currentFrame != null) {
+            List<Group> currentGroup = groupFinder.findConnectedGroups(currentFrame.image());
+
+            // if no centroid, create a nullified value
+            if (currentGroup.size() == 0) {
+                orderedGroups.add(
+                    new TimedGroup(currentFrame.seconds(), new Group(
+                            0, new Coordinate(-1, -1)
+                        )
+                    )
+                );
+                continue;
+            }
+
+            // add largest (first) Group to output list
+            // groups are automatically sorted in findConnectedGroups
+            orderedGroups.add(new TimedGroup(currentFrame.seconds(), currentGroup.getFirst()));
+            // current = current.next;
+            currentFrame = nextFrame();
         }
 
+        this.close();
         return orderedGroups;
     }
 }
