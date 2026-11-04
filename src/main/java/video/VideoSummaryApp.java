@@ -1,16 +1,15 @@
 package video;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.util.List;
-
-import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import image.EuclideanColorDistance;
 import image.DistanceImageBinarizer;
 import image.ImageBinarizer;
 import image.ColorDistanceFinder;
-import image.Group;
+import image.DfsBinaryGroupFinder;
+import image.BinarizingImageGroupFinder;
+import image.ImageGroupFinder;
 
 public class VideoSummaryApp {
     public static void main(String[] args) {
@@ -18,30 +17,12 @@ public class VideoSummaryApp {
         // check for valid args
         if (args.length != 4) {
             System.out.println("Improper usage!\nCorrect usage: java VideoSummaryApp <input_video_path> <output_csv> <target_color_hexcode> <threshold>");
+            return;
         }
 
         String inputPath = args[0];
         String outputPath = args[1];
         String targetColorHex = args[2];
-
-        // check if threshold is an integer
-        int threshold = 0;
-        try {
-            threshold = Integer.parseInt(args[2]);
-        } catch (NumberFormatException e) {
-            System.out.println("Threshold must be an integer!");
-            return;
-        }
-
-        // check if the input path is valid.
-        FFmpegFrameGrabber grabber = null;
-        try {
-            grabber = new FFmpegFrameGrabber(inputPath);
-        } catch (Exception e) {
-            System.err.println("Failed to load mp4 file at: " + inputPath);
-            e.printStackTrace();
-            return;
-        }
 
         // check if targetColorHex is actually hexidecimal in the proper format.
         int targetColor = 0;
@@ -52,24 +33,38 @@ public class VideoSummaryApp {
             return;
         }
 
+        // check if threshold is an integer
+        int threshold = 0;
+        try {
+            threshold = Integer.parseInt(args[3]);
+        } catch (NumberFormatException e) {
+            System.out.println("Threshold must be an integer!");
+            return;
+        }
+
         // args are valid! move onto calling proper classes and functions.
 
-        // instances for frameProcesser
+        // creating our pipelines for frame processing...
         ColorDistanceFinder distFinder = new EuclideanColorDistance();
+        // turns images into 2D binary arrays
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
+        // finds groups of identified pixels
+        ImageGroupFinder groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
 
-        // construct processor
-        JavaCvFrameSource frameProcessor = new JavaCvFrameSource(grabber, binarizer);
+        // finds the largest Group
+        LargestCentroidLocator locator = new LargestCentroidLocator(groupFinder);
+        // loops through every frame in the video and returns its largest Group per frame
+        VideoSummarizer summarizer = new VideoSummarizer(locator);
 
         // output list which will have its values put into the .csv file.
         List<TimedGroup> groups = null;
         
         // process the video!
         // kills if any exceptions are thrown (likely from the frame grabber breaking)
-        try {
-            groups = frameProcessor.process();
+        try (FrameSource source = new JavaCvFrameSource(inputPath)) {
+            groups = summarizer.process(source);
         } catch (Exception e) {
-            System.out.println("Failed to process image.");
+            System.out.println("Failed to process video at " + inputPath);
             e.printStackTrace();
             return;
         }
