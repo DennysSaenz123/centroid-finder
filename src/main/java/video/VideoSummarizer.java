@@ -27,6 +27,7 @@ public class VideoSummarizer {
             if (writer != null) {
                 writer.write(frame, located);
             }
+            System.out.println("Wrote frame at " + frame.seconds() + " seconds.");
         }
         return results;
     }
