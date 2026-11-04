@@ -26,9 +26,10 @@ replay_pid*
 # maven related files/folders
 target
 
-# image
+# inputs
 binarized.png
-greenKitten.png
+sampleInput/kitten.mp4
 
 # outputs
 output.csv
+greenKitten.png
