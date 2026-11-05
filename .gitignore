@@ -32,3 +32,6 @@ processor/sampleInput/*.mp4
 
 # outputs
 sampleOutput/*.csv
+
+# server related
+node_modules
