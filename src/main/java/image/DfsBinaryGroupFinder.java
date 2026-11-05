@@ -63,8 +63,10 @@ public class DfsBinaryGroupFinder implements BinaryGroupFinder {
 
         for (int i = 0; i < image.length; i++) {
             for (int j = 0; j < image[i].length; j++) {
-                if (image[i][j] == 1 && !visited.contains(new Coordinate(j, i))) {
-                    groups.add(findConnectedGroup(image, new Coordinate(j, i), visited));
+                if (image[i][j] == 1) {
+                    if (!visited.contains(new Coordinate(j, i))) {
+                        groups.add(findConnectedGroup(image, new Coordinate(j, i), visited));
+                    }
                 }
             }
         }
