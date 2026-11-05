@@ -28,3 +28,12 @@ for (frame in frames) {
 csv.output(biggestframe);
 
 java -jar videoprocesser.jar inputPath outputCsv targetColor threshold
+
+We had our own video in which we tested the program with. We validated the program in two ways,
+first we checked to see if there was an actual input being read in, in which there was! Sometimes it would not detect anything if the threshold was too low, which is to be expected.
+The numbers looked reasonable enough.
+second, in a different branch (advanced-video), we wrote some code in combination with Claude to output the binarized frames into a new video.
+Claude helped with codec setup and added a dot to where the centroid was in each BufferedImage frame.
+Checking the outputs of each video, the sillouettes matched, and was tracking the centroids very well.
+To find our color, we used color picker software and screenshots.
+We also found that a threshold value from 40-70 is a pretty good sweet spot if you're dealing with shadows.
