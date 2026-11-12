@@ -41,3 +41,5 @@ server/videos/*
 !server/videos/.gitkeep
 server/results/*
 !server/results/.gitkeep
+
+server/backend/centroidVideoFinder.jar
