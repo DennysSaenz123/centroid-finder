@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5122;
 const ROOT = path.resolve(import.meta.dirname, '..');
 const VIDEOS_DIR = path.resolve(ROOT, process.env.VIDEOS_DIR || 'videos');
 const RESULTS_DIR = path.resolve(ROOT, process.env.RESULTS_DIR || 'results');
-const JAR_DIR = path.resolve(ROOT, process.env.JAR_DIR);
+const JAR_DIR = path.resolve(ROOT, process.env.JAR_DIR, "centroidFinderVideo-1.0-SNAPSHOT-jar-with-dependencies.jar");
 
 // publicly host raw videos and finished CSVs
 app.use('/videos', express.static(VIDEOS_DIR));
