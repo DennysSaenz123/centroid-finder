@@ -36,7 +36,6 @@ sampleOutput/*.csv
 # server related
 node_modules
 
-server/.env
 server/videos/*
 !server/videos/.gitkeep
 server/results/*
