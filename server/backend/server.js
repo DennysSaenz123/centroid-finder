@@ -55,7 +55,7 @@ app.get('/thumbnail/:filename', (req, res) => {
         '-vcodec', 'mjpeg',  // encoded as JPEG
         'pipe:1'             // write to stdout instead of a file
     ], {
-        stdio: ['ignore', 'pipe', 'ignore'] // ignore stdin stderr, use stdout
+        stdio: ['inherit'] // ignore stdin stderr, use stdout
     });
 
     const chunks = [];
@@ -107,16 +107,20 @@ app.post('/process/:filename', async (req, res) => {
     }
  
     const jobId = randomUUID();
+    
+    // JAR path arguments
+    const inputPath = path.join(VIDEOS_DIR, filename);
+    const outputPath = path.join(RESULTS_DIR, `${filename}.csv`);
  
     try {
         // args are passed as an array (no shell), so user input can't inject commands
         const child = spawn(
             'java',
-            ['-jar', JAR_DIR, filename, hex, String(thresholdNum)],
+            ['-jar', JAR_DIR, inputPath, outputPath, hex, String(thresholdNum)],
             {
                 cwd: ROOT,
                 detached: true,   // run independently of the server process
-                stdio: 'ignore'   // ignore stdin/stdout/stderr
+                stdio: 'inherit'   // ignore stdin/stdout/stderr
             }
         );
  
@@ -149,6 +153,7 @@ app.post('/process/:filename', async (req, res) => {
                 await fs.access(path.join(RESULTS_DIR, csvName));
                 jobs.set(jobId, { status: 'done', result: `/results/${csvName}` });
             } catch {
+                console.log('Looking for:', path.join(RESULTS_DIR, csvName));
                 jobs.set(jobId, { status: 'error', error: 'Error processing video: result file not found' });
             }
         });
