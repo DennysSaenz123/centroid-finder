@@ -1,5 +1,5 @@
 import express from 'express';
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
@@ -7,6 +7,7 @@ import ffmpegPath from 'ffmpeg-static';
 import { randomUUID } from 'crypto';
 
 const app = express();
+dotenv.config({ path: path.resolve(import.meta.dirname, '..', '.env') });
 const PORT = process.env.PORT || 5122;
 
 // resolve folders relative to server/
@@ -53,7 +54,9 @@ app.get('/thumbnail/:filename', (req, res) => {
         '-f', 'image2',      // output as an image
         '-vcodec', 'mjpeg',  // encoded as JPEG
         'pipe:1'             // write to stdout instead of a file
-    ]);
+    ], {
+        stdio: ['ignore', 'pipe', 'ignore'] // ignore stdin stderr, use stdout
+    });
 
     const chunks = [];
     ffmpeg.stdout.on('data', chunk => chunks.push(chunk));
