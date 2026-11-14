@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { spawn } from 'child_process';
 import ffmpegPath from 'ffmpeg-static';
+import { randomUUID } from 'crypto';
 
 const app = express();
 const PORT = process.env.PORT || 5122;
@@ -108,7 +109,7 @@ app.post('/process/:filename', async (req, res) => {
         // args are passed as an array (no shell), so user input can't inject commands
         const child = spawn(
             'java',
-            ['-jar', JAR_PATH, filename, hex, String(thresholdNum)],
+            ['-jar', JAR_DIR, filename, hex, String(thresholdNum)],
             {
                 cwd: ROOT,
                 detached: true,   // run independently of the server process
