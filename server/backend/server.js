@@ -5,8 +5,13 @@ import path from 'path';
 import { spawn } from 'child_process';
 import ffmpegPath from 'ffmpeg-static';
 import { randomUUID } from 'crypto';
+import cors from 'cors';
 
 const app = express();
+
+
+app.use(cors({ origin: 'http://localhost:5173' }));
+
 dotenv.config({ path: path.resolve(import.meta.dirname, '..', '.env') });
 const PORT = process.env.PORT || 5122;
 
