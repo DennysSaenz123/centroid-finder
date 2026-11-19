@@ -62,13 +62,16 @@ public class VideoSummaryApp {
 
         // creating our pipelines for frame processing...
         ColorDistanceFinder distFinder = new EuclideanColorDistance();
+        
         // turns images into 2D binary arrays
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
+
         // finds groups of identified pixels
         ImageGroupFinder groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
 
         // finds the largest Group
         LargestCentroidLocator locator = new LargestCentroidLocator(groupFinder);
+
         // loops through every frame in the video and returns its largest Group per frame
         VideoSummarizer summarizer = new VideoSummarizer(locator);
 
