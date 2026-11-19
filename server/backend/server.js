@@ -64,7 +64,6 @@ app.use(express.urlencoded({ extended:true }));
 
 // app.get /api/videos -> list of video filenames
 app.get('/api/videos', async (req, res) => {
-    console.log("Video list requested");
     try {
         const entries = await fs.readdir(VIDEOS_DIR, { withFileTypes: true });
         const videos = entries
@@ -80,7 +79,6 @@ app.get('/api/videos', async (req, res) => {
 
 // GET /thumbnail/:filename -> first frame as a JPEG
 app.get('/thumbnail/:filename', (req, res) => {
-    console.log("Thumbnail requested");
     // block path tricks like ../../secret.txt
     const filename = path.basename(req.params.filename);
     const videoPath = path.join(VIDEOS_DIR, filename);
@@ -114,7 +112,6 @@ app.get('/thumbnail/:filename', (req, res) => {
 // POST /process/:filename?targetColor=<hex>&threshold=<int> -> start async job
 app.post('/process/:filename', async (req, res) => {
     const { targetColor, threshold } = req.query;
-    console.log("Processing request received.");
  
     if (targetColor === undefined || threshold === undefined || targetColor === '' || threshold === '') {
         return res.status(400).json({ error: 'Missing targetColor or threshold query parameter.' });
@@ -152,7 +149,6 @@ app.post('/process/:filename', async (req, res) => {
  
     try {
         // args are passed as an array (no shell), so user input can't inject commands
-        console.log(`Starting job ${jobId}`);
         const child = spawn(
             'java',
             ['-jar', JAR_DIR, inputPath, outputPath, hex, String(thresholdNum)],
@@ -191,7 +187,6 @@ app.post('/process/:filename', async (req, res) => {
             try {
                 await fs.access(path.join(RESULTS_DIR, csvName));
                 jobs.set(jobId, { status: 'done', result: `/results/${csvName}` });
-                console.log(`Job ${jobId} completed`);
             } catch {
                 console.log('Looking for:', path.join(RESULTS_DIR, csvName));
                 jobs.set(jobId, { status: 'error', error: 'Error processing video: result file not found' });
