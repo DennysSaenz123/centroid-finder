@@ -95,7 +95,7 @@ app.post('/process/:filename', async (req, res) => {
  
     const thresholdStr = String(threshold);
     const thresholdNum = Number(thresholdStr);
-    if (!/^\d+$/.test(thresholdStr) || thresholdNum < 0 || thresholdNum > 255) {
+    if (!/^\d+$/.test(thresholdStr) || thresholdNum < 0 || thresholdNum > 442) {
         return res.status(400).json({ error: 'threshold must be an integer from 0 to 255.' });
     }
  
