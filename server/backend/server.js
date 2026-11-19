@@ -48,13 +48,14 @@ const upload = multer({
         if (VIDEO_EXTENSIONS.includes(ext)) return cb(null, true);
         cb(Object.assign(new Error('Unsupported video file type.'), { status: 400 }));
     },
-    limits: { fileSize: 2 * 1024 ** 3 }, // 2 GB, adjust to taste
+    limits: { fileSize: 4 * 1024 ** 3 }, // 4 GB, adjust to taste
 });
 
 // POST /api/videos (multipart, field name "video") -> { filename }
 app.post('/api/videos', upload.single('video'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
     res.status(201).json({ filename: req.file.filename });
+    console.log("Video uploaded");
 });
 
 const jobs = new Map();
