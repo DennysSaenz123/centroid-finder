@@ -6,6 +6,7 @@ import { spawn } from 'child_process';
 import ffmpegPath from 'ffmpeg-static';
 import { randomUUID } from 'crypto';
 import cors from 'cors';
+import multer from 'multer';
 
 const app = express();
 
@@ -28,12 +29,41 @@ app.use('/results', express.static(RESULTS_DIR));
 // file types we treat as videos
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.mkv', '.webm'];
 
+// file upload
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: VIDEOS_DIR,
+        filename: async (req, file, cb) => {
+            const name = path.basename(file.originalname); // strip any path tricks
+            try {
+                await fs.access(path.join(VIDEOS_DIR, name));
+                cb(Object.assign(new Error('A video with that name already exists.'), { status: 409 }));
+            } catch {
+                cb(null, name);
+            }
+        },
+    }),
+    fileFilter: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (VIDEO_EXTENSIONS.includes(ext)) return cb(null, true);
+        cb(Object.assign(new Error('Unsupported video file type.'), { status: 400 }));
+    },
+    limits: { fileSize: 2 * 1024 ** 3 }, // 2 GB, adjust to taste
+});
+
+// POST /api/videos (multipart, field name "video") -> { filename }
+app.post('/api/videos', upload.single('video'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+    res.status(201).json({ filename: req.file.filename });
+});
+
 const jobs = new Map();
 
 app.use(express.urlencoded({ extended:true }));
 
 // app.get /api/videos -> list of video filenames
 app.get('/api/videos', async (req, res) => {
+    console.log("Video list requested");
     try {
         const entries = await fs.readdir(VIDEOS_DIR, { withFileTypes: true });
         const videos = entries
@@ -49,6 +79,7 @@ app.get('/api/videos', async (req, res) => {
 
 // GET /thumbnail/:filename -> first frame as a JPEG
 app.get('/thumbnail/:filename', (req, res) => {
+    console.log("Thumbnail requested");
     // block path tricks like ../../secret.txt
     const filename = path.basename(req.params.filename);
     const videoPath = path.join(VIDEOS_DIR, filename);
@@ -82,6 +113,7 @@ app.get('/thumbnail/:filename', (req, res) => {
 // POST /process/:filename?targetColor=<hex>&threshold=<int> -> start async job
 app.post('/process/:filename', async (req, res) => {
     const { targetColor, threshold } = req.query;
+    console.log("Processing request received.");
  
     if (targetColor === undefined || threshold === undefined || targetColor === '' || threshold === '') {
         return res.status(400).json({ error: 'Missing targetColor or threshold query parameter.' });
@@ -119,6 +151,7 @@ app.post('/process/:filename', async (req, res) => {
  
     try {
         // args are passed as an array (no shell), so user input can't inject commands
+        console.log(`Starting job ${jobId}`);
         const child = spawn(
             'java',
             ['-jar', JAR_DIR, inputPath, outputPath, hex, String(thresholdNum)],
@@ -157,12 +190,12 @@ app.post('/process/:filename', async (req, res) => {
             try {
                 await fs.access(path.join(RESULTS_DIR, csvName));
                 jobs.set(jobId, { status: 'done', result: `/results/${csvName}` });
+                console.log(`Job ${jobId} completed`);
             } catch {
                 console.log('Looking for:', path.join(RESULTS_DIR, csvName));
                 jobs.set(jobId, { status: 'error', error: 'Error processing video: result file not found' });
             }
         });
- 
         res.status(202).json({ jobId });
     } catch (err) {
         console.error(err);
@@ -182,6 +215,11 @@ app.get('/process/:jobId/status', (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Error fetching job status' });
     }
+});
+
+app.use((err, req, res, next) => {
+    if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'File is too large.' });
+    res.status(err.status || 500).json({ error: err.message || 'Server error' });
 });
 
 app.listen(PORT, () => {
