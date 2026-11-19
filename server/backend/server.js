@@ -60,7 +60,7 @@ app.get('/thumbnail/:filename', (req, res) => {
         '-vcodec', 'mjpeg',  // encoded as JPEG
         'pipe:1'             // write to stdout instead of a file
     ], {
-        stdio: ['inherit'] // ignore stdin stderr, use stdout
+        stdio: ['ignore', 'pipe', 'ignore'] // no stdin, keep stdout for the image, no stderr
     });
 
     const chunks = [];
