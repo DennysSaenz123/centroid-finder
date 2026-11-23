@@ -23,5 +23,21 @@
 hs_err_pid*
 replay_pid*
 
-# image
-binarized.png
+# maven related files/folders
+target
+processor/target
+
+# inputs
+processor/sampleInput/*.mp4
+
+# outputs
+sampleOutput/*.csv
+
+# server related
+node_modules
+
+# backend video storage
+server/videos/*
+!server/videos/.gitkeep
+server/results/*
+!server/results/.gitkeep
