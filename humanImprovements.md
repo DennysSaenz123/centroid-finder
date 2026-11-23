@@ -4,4 +4,4 @@
 - Delete dead experimental classes (we did that lol)
 - Delete ImageSummaryApp (not being used)
 - Improve VideoSummaryApp, VideoSummarizer, JavaCVFrameSource Exception throws.
-1. Refactor centroid.js: split into different js files and keep centroid as entry point only.
+- Refactor centroid.js: split into different js files and keep centroid as entry point only.
