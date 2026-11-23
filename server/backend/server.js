@@ -183,6 +183,8 @@ app.post('/process/:filename', async (req, res) => {
                 return;
             }
             // assumes the JAR writes RESULTS_DIR/<filename>.csv
+
+            // TODO: Move path validation before job start
             const csvName = `${filename}.csv`;
             try {
                 await fs.access(path.join(RESULTS_DIR, csvName));
