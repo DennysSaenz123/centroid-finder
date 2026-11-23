@@ -13,12 +13,21 @@ import image.BinarizingImageGroupFinder;
 import image.ImageGroupFinder;
 
 public class VideoSummaryApp {
-    public static void main(String[] args) {
+
+    private static final int EXIT_CODE_SUCCESS = 0;
+    private static final int EXIT_CODE_FAILURE = 1;
+    private static final int EXIT_CODE_INVALID_ARGS = 2;
+    private static final int EXIT_CODE_FILE_NOT_FOUND = 3;
+    private static final int EXIT_CODE_FILE_NOT_READABLE = 4;
+    private static final int EXIT_CODE_INVALID_HEX_COLOR = 5;
+
+    public static int main(String[] args) {
+
 
         // check for valid args
         if (args.length != 4) {
             System.out.println("Improper usage!\nCorrect usage: java VideoSummaryApp <input_video_path> <output_csv> <target_color_hexcode> <threshold>");
-            return;
+            return EXIT_CODE_INVALID_ARGS;
         }
 
         String inputPath = args[0];
@@ -29,15 +38,15 @@ public class VideoSummaryApp {
         File inputFile = new File(inputPath);
         if (!inputFile.exists()) {
             System.err.println("Input file at " + inputFile.getAbsolutePath() + " does not exist.");
-            return;
+            return EXIT_CODE_FILE_NOT_FOUND;
         }
         if (!inputFile.isFile()) {
             System.err.println("Input path at " + inputFile.getAbsolutePath() + " is not a file. (Is it a directory?)");
-            return;
+            return EXIT_CODE_FILE_NOT_FOUND;
         }
         if (!inputFile.canRead()) {
             System.err.println("Input file at " + inputFile.getAbsolutePath() + " could not be read.");
-            return;
+            return EXIT_CODE_FILE_NOT_FOUND;
         }
 
         // check if targetColorHex is actually hexidecimal in the proper format.
@@ -46,7 +55,7 @@ public class VideoSummaryApp {
             targetColor = Integer.parseInt(targetColorHex, 16);
         } catch (NumberFormatException e) {
             System.err.println("Invalid hex target color. Please provide a color in RRGGBB format.");
-            return;
+            return EXIT_CODE_INVALID_HEX_COLOR;
         }
 
         // check if threshold is an integer
@@ -55,7 +64,7 @@ public class VideoSummaryApp {
             threshold = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
             System.out.println("Threshold must be an integer!");
-            return;
+            return EXIT_CODE_FAILURE;
         }
 
         // args are valid! move onto calling proper classes and functions.
@@ -87,7 +96,7 @@ public class VideoSummaryApp {
         } catch (Exception e) {
             System.out.println("Failed to process video at " + inputPath);
             e.printStackTrace();
-            return;
+            return EXIT_CODE_FAILURE;
         }
 
         System.out.println("\n\nVideo processed! Outputting .csv file...\n\n");
@@ -102,5 +111,6 @@ public class VideoSummaryApp {
             System.err.println("Error writing " + outputPath + ".");
             e.printStackTrace();
         }
+        return EXIT_CODE_SUCCESS;
     }   
 }
