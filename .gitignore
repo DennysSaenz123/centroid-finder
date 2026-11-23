@@ -36,9 +36,8 @@ sampleOutput/*.csv
 # server related
 node_modules
 
+# backend video storage
 server/videos/*
 !server/videos/.gitkeep
 server/results/*
 !server/results/.gitkeep
-
-server/backend/centroidVideoFinder.jar
