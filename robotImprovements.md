@@ -7,3 +7,5 @@
 - Document exit codes
 - Stale comments (VideoSummaryApp)
 - 
+- Split centroid server logic into 4 different js files: colorDistance.js(EuclideanColorDistance),
+ binarizer.js(DistanceImageBinazer), group.js(Group), groupFinder.js(DfsBinaryGroupFinder). Keep centroid.js to analyze frame and re-exports.
