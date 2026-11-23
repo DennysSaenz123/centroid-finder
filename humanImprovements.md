@@ -1,0 +1,1 @@
+1. Refactor centroid.js: split into different js files and keep centroid as entry point only.
