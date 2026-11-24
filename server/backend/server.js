@@ -177,9 +177,31 @@ app.post('/process/:filename', async (req, res) => {
         });
  
         child.on('exit', async (code, signal) => {
-            if (code !== 0) {
-                const reason = signal ? `terminated by ${signal}` : `exited with code ${code}`;
+            if (code == 1) {
+                const reason = (signal ? `terminated by ${signal}` : `exited with code ${code}`);
                 jobs.set(jobId, { status: 'error', error: `Error processing video: ${reason}` });
+                return;
+            }
+            else if (code == 2) {
+                const reason = (signal ? `terminated by ${signal}` : `exited with code ${code}`);
+                reason += 'Invalid arguments provided'
+                jobs.set(jobId, { status: 'error', error: `Invalid arguments provided: ${reason}` });
+                return;
+            }
+            else if (code == 3) {
+                const reason = (signal ? `terminated by ${signal}` : `exited with code ${code}`);
+                reason += ' Input file not found'
+                jobs.set(jobId, { status: 'error', error: `Input file not found: ${reason}` });
+                return;
+            }
+            else if (code == 4) {
+                const reason = (signal ? `terminated by ${signal}` : `exited with code ${code}`);
+                jobs.set(jobId, { status: 'error', error: `Input file cannot be read: ${reason}` });
+                return;
+            }
+            else if (code == 5) {
+                const reason = signal ? `terminated by ${signal}` : `exited with code ${code}`;
+                jobs.set(jobId, { status: 'error', error: `Invalid hex code provided: ${reason}` });
                 return;
             }
             // assumes the JAR writes RESULTS_DIR/<filename>.csv
