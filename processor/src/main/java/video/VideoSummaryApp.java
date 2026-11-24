@@ -12,6 +12,29 @@ import image.DfsBinaryGroupFinder;
 import image.BinarizingImageGroupFinder;
 import image.ImageGroupFinder;
 
+/**
+ * The Video Summary Application
+ * 
+ * A re-implementation of the Image Summary Application, designed specifically for videos.
+ * 
+ * Takes in four command-line arguments:
+ * 1. The path to the video file (example: "directory/folder/video.mp4")
+ * 2. An output path for a .csv file containing your video's data. (example: "directory/folder/output.csv")
+ * 3. A target hex color in RRGGBB format. (example: FFA500 for orange)
+ * 4. A threshold in integer format for binarization. (maximum is 441)
+ * 
+ * The application performs as follows:
+ * 1. Parses your input color into a 24-bit integer.
+ * 2. Initializes the threshold for binarization by calculating the Euclidean color distance between your
+ *    desired color and any colors within the threshold.
+ * 3. Begins slicing through your input video, binarizing each frame's pixel. A pixel is marked white (1) if it is
+ *    within Euclidean color distance of your desired color, determined by your threshold. Otherwise, it is marked
+ *    black (0).
+ * 4. Combs through your binarized frames, grabbing the largest group of color and its centroid. Groups are connected
+ *    horizontally and vertical, and can be used to represent an object that is the same color across it's entire body.
+ * 5. Writes out a .csv file containing the timestamp of the frame, and the x and y coordinates of the largest group per
+ *    frame. x grows from top to bottom, and y grows from left to right.
+ */
 public class VideoSummaryApp {
     public static void main(String[] args) {
 
