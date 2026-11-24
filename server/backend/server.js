@@ -140,6 +140,17 @@ app.post('/process/:filename', async (req, res) => {
     } catch {
         return res.status(400).json({ error: 'Video file not found.' });
     }
+
+    if (path.dirname(outputPath) !== RESULTS_DIR) {
+        return res.status(400).json({ error: 'Invalid output path.' });
+    }
+
+    try {
+        await fs.mkdir(RESULTS_DIR, { recursive: true });
+        await fs.access(RESULTS_DIR, fs.constants.W_OK);
+    } catch {
+        return res.status(500).json({ error: 'Results directory is not writable.' });
+    }
  
     const jobId = randomUUID();
     
