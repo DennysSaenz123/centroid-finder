@@ -25,7 +25,7 @@ public class VideoSummaryApp {
         String outputPath = args[1];
         String targetColorHex = args[2];
 
-        // check if the input path actually exists
+        // check that the input path exists and is a readable file
         File inputFile = new File(inputPath);
         if (!inputFile.exists()) {
             System.err.println("Input file at " + inputFile.getAbsolutePath() + " does not exist.");
@@ -40,7 +40,7 @@ public class VideoSummaryApp {
             return;
         }
 
-        // check if targetColorHex is actually hexidecimal in the proper format.
+        // check if targetColorHex is actually hexadecimal in the proper format.
         int targetColor = 0;
         try {
             targetColor = Integer.parseInt(targetColorHex, 16);
@@ -58,18 +58,12 @@ public class VideoSummaryApp {
             return;
         }
 
-        // args are valid! move onto calling proper classes and functions.
-
-        // creating our pipelines for frame processing...
+        // build the image processing pipeline
         ColorDistanceFinder distFinder = new EuclideanColorDistance();
-        
-        // turns images into 2D binary arrays
         ImageBinarizer binarizer = new DistanceImageBinarizer(distFinder, targetColor, threshold);
-
-        // finds groups of identified pixels
         ImageGroupFinder groupFinder = new BinarizingImageGroupFinder(binarizer, new DfsBinaryGroupFinder());
 
-        // finds the largest Group
+        // finds the largest Group in each frame of the video (if any exist)
         LargestCentroidLocator locator = new LargestCentroidLocator(groupFinder);
 
         // loops through every frame in the video and returns its largest Group per frame
@@ -80,8 +74,7 @@ public class VideoSummaryApp {
         
         System.out.println("\n\nStarting video processing...\n\n");
 
-        // process the video!
-        // kills if any exceptions are thrown (likely from the frame grabber breaking)
+        // processevery frame; the video is cloesd automatically, even when failure.
         try (FrameSource source = new JavaCvFrameSource(inputPath)) {
             groups = summarizer.process(source);
         } catch (Exception e) {
@@ -92,7 +85,7 @@ public class VideoSummaryApp {
 
         System.out.println("\n\nVideo processed! Outputting .csv file...\n\n");
 
-        // output as a .csv
+        // write one CSV row per frame 
         try (PrintWriter writer = new PrintWriter(outputPath)) {
             for (TimedGroup group : groups) {
                 writer.println(group.toCsvRow());
