@@ -4,7 +4,10 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 
-
+/**
+ * An implementation of FrameSource that slices through frames in a video, converting
+ * them into BufferedImages and outputting TimedFrames to be processed by other classes.
+ */
 public class JavaCvFrameSource implements FrameSource {
 
     // Reads frames from the video file; final because it's set once in the constructor
@@ -18,6 +21,12 @@ public class JavaCvFrameSource implements FrameSource {
         grabber.start();
     }
     
+    /**
+     * Increments forward to the next frame of the video passed into the constructor on every call.
+     * 
+     * @return A TimedFrame representing the processed frame.
+     * @throws Exception Thrown when FFmpegFrameGrabber fails to retrieve the next frame.
+     */
     @Override
     public TimedFrame nextFrame() throws Exception {
         // Grab the next video frame only (grab() would also return audio frames)
@@ -33,7 +42,13 @@ public class JavaCvFrameSource implements FrameSource {
         return new TimedFrame(seconds, converter.convert(frame));
     }
     
-    // Required by AutoCloseable: runs automatically at the end of a try-with-resources block
+    /**
+     * Stops the FFmpegFrameGrabber. Call this when you're finished using JavaCvFrameSource.
+     * 
+     * Required by JavaCV AutoClosable.
+     * 
+     * @throws Exception Thrown when FFmpegFrameGrabber fails to stop video processing, free memory, or clean buffers.
+     */
     @Override
     public void close() throws Exception {
         // Stop decoding the video
